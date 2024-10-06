@@ -10,20 +10,22 @@ namespace CookApps.Managers
 {
     public class GameStep : Step
     {
-        public ReactiveProperty<int> spinningTopCount = new(10 * 5);
-        public ReactiveProperty<int> moveCount = new(20 * 5);
-        public ReactiveProperty<int> score = new();
         private int defaultSpinningTopCount;
         private int defaultMoveCount;
         
         
-
+        public ReactiveProperty<int> SpinningTopCount { get; } = new(10);
+        public ReactiveProperty<int> MoveCount { get; }= new(20);
+        public ReactiveProperty<int> Score { get; } = new();
+        
+        
+        
         protected override void Awake()
         {
             base.Awake();
 
-            defaultSpinningTopCount = spinningTopCount.Value;
-            defaultMoveCount = moveCount.Value;
+            defaultSpinningTopCount = SpinningTopCount.Value;
+            defaultMoveCount = MoveCount.Value;
         }
 
         protected override void Start()
@@ -36,7 +38,7 @@ namespace CookApps.Managers
         
         private void OnDestroy()
         {
-            if (BlockManager.Instance != null)
+            if (BlockManager.InstanceIsNull)
             {
                 BlockManager.Instance.onDestroyBlockBegin -= OnDestroyBlockBegin;
                 BlockManager.Instance.onBlockDragEnd -= OnBlockDragEnd;
@@ -49,9 +51,9 @@ namespace CookApps.Managers
         {
             var destroyedSpinningTopCount = destroyBlocks.Count(t => t == BlockType.SpinningTop);
             Debug.Log($"{Time.frameCount}/ {destroyedSpinningTopCount}");
-            spinningTopCount.Value = Mathf.Max(0, spinningTopCount.Value - destroyedSpinningTopCount);
-            score.Value += destroyBlocks.Sum(t => t != BlockType.SpinningTop ? 20 : 500);
-            if (0 < spinningTopCount.Value) return;
+            SpinningTopCount.Value = Mathf.Max(0, SpinningTopCount.Value - destroyedSpinningTopCount);
+            Score.Value += destroyBlocks.Sum(t => t != BlockType.SpinningTop ? 20 : 500);
+            if (0 < SpinningTopCount.Value) return;
 
             await Awaitable.WaitForSecondsAsync(Block.DestroyJumpDuration);
             Main.Instance.CurrentStep = Main.Instance.LastStep;
@@ -59,8 +61,8 @@ namespace CookApps.Managers
 
         private void OnBlockDragEnd()
         {
-            moveCount.Value = Mathf.Max(0, moveCount.Value - 1);
-            if (0 < moveCount.Value) return;
+            MoveCount.Value = Mathf.Max(0, MoveCount.Value - 1);
+            if (0 < MoveCount.Value) return;
             
             Main.Instance.PassCurrentStep();
         }
@@ -72,9 +74,9 @@ namespace CookApps.Managers
             if (Main.Instance.playOnStart.stepOrNull == this) return;
 
             Toast.Instance.Show("Woohoo! Its a spinning TOP!\nMatch blocks around it to spin\nit!");
-            spinningTopCount.Value = defaultSpinningTopCount;
-            moveCount.Value = defaultMoveCount;
-            score.Value = 0;
+            SpinningTopCount.Value = defaultSpinningTopCount;
+            MoveCount.Value = defaultMoveCount;
+            Score.Value = 0;
             await Awaitable.WaitForSecondsAsync(Toast.DefaultDuration);
         }
 

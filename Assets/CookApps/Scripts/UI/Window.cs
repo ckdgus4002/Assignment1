@@ -36,7 +36,7 @@ namespace CookApps.UI
 
         private void OnDestroy()
         {
-            if (Main.Instance != null) Main.Instance.OnCurrentStepIndexChanged -= OnCurrentStepIndexChanged;
+            if (!Main.InstanceIsNull) Main.Instance.OnCurrentStepIndexChanged -= OnCurrentStepIndexChanged;
         }
         
         

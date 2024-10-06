@@ -79,9 +79,11 @@ namespace CookApps.UI
             }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            if (Main.Instance != null) Main.Instance.OnCurrentStepIndexChanged -= OnCurrentStepIndexChanged;
+            base.OnDestroy();
+            
+            if (!Main.InstanceIsNull) Main.Instance.OnCurrentStepIndexChanged -= OnCurrentStepIndexChanged;
         }
         
         

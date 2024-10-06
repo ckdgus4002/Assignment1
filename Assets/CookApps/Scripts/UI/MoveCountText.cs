@@ -29,9 +29,11 @@ namespace CookApps.UI
             Main.Instance.OnCurrentStepIndexChanged += OnCurrentStepIndexChanged;
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            if (Main.Instance != null) Main.Instance.OnCurrentStepIndexChanged -= OnCurrentStepIndexChanged;
+            base.OnDestroy();
+            
+            if (!Main.InstanceIsNull) Main.Instance.OnCurrentStepIndexChanged -= OnCurrentStepIndexChanged;
         }
         
         
@@ -47,11 +49,11 @@ namespace CookApps.UI
             wrapper.SetActive(currentGameStepOrNull != null);
             if (currentGameStepOrNull != null)
             {
-                text.text = $"{currentGameStepOrNull.moveCount.Value}";
-                currentGameStepOrNull.moveCount.OnValueChanged += OnMoveCountChanged;
+                text.text = $"{currentGameStepOrNull.MoveCount.Value}";
+                currentGameStepOrNull.MoveCount.OnValueChanged += OnMoveCountChanged;
             }
             if (prevGameStepOrNull != null) 
-                prevGameStepOrNull.moveCount.OnValueChanged -= OnMoveCountChanged;
+                prevGameStepOrNull.MoveCount.OnValueChanged -= OnMoveCountChanged;
         }
     }
 }
