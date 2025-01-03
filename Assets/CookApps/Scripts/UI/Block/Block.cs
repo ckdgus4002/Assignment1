@@ -39,7 +39,8 @@ namespace CookApps.UI
         
         
         private bool _isDragging;
-        private Image image;
+        private bool _isDestroying;
+        private Image _image;
 
         
         public BlockType Type
@@ -70,7 +71,7 @@ namespace CookApps.UI
         {
             _tile = value;
             if (0 < moveDuration)
-                if (!isDestroying && !IsDestroyed)
+                if (!_isDestroying && !IsDestroyed)
                     RectTransformOrNull.DOMove(_tile.RectTransformOrNull.position, moveDuration);
         }
         private Tile _tile;
@@ -99,8 +100,8 @@ namespace CookApps.UI
         {
             base.Awake();
 
-            image = GetComponent<Image>();
-            image.alphaHitTestMinimumThreshold = 1 / 255f;
+            _image = GetComponent<Image>();
+            _image.alphaHitTestMinimumThreshold = 1 / 255f;
         }
         
         protected override void Start()
@@ -152,12 +153,11 @@ namespace CookApps.UI
                 RectTransformOrNull.DOScale(1, 1);
         }
 
-        private bool isDestroying;
-        [ShowInInspector] 
+        [Button] 
         public void Destroy()
         {
             RaycastTarget = false;
-            isDestroying = true;
+            _isDestroying = true;
             switch (Type)
             {
                 case BlockType.Red:
